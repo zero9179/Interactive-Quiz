@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { questionData } from "../data/questionData";
 import Countdown from "../componentes/Countdown";
 import { GrLinkNext, GrLinkPrevious } from "react-icons/gr";
@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 
 function QuizPage() {
   let topic = localStorage.getItem("topic");
-  console.log("asd", topic);
   const [score, setScore] = useState(0);
   const [activePage, setActivePage] = useState(0);
   const [testEnd, setTestEnd] = useState(false);
@@ -28,13 +27,15 @@ function QuizPage() {
     return shuffled.slice(0, count);
   }
 
-  if (topic === "all") {
-    filterData = getMixedQuestions(10); // ✅ now picks 10 random unique questions
-  } else {
-    filterData = questionData.filter((item) => item.topic === topic);
-  }
+  const Data = useMemo(() => {
+    if (topic === "all") {
+      return getMixedQuestions(10);
+    } else {
+      return questionData.filter((item) => item.topic === topic);
+    }
+  }, [topic]);
 
-  const Data = filterData;
+  // const Data = filterData;
   const testTime = 5;
 
   const selectQuestion = Data[activePage];
@@ -60,7 +61,7 @@ function QuizPage() {
     } else {
       setActivePage((a) => (a < Data.length - 1 ? a + 1 : 0));
     }
-    console.log("answer", answers);
+    // console.log("answer", answers);
   };
 
   const handleTimerEnd = (time) => {
@@ -158,9 +159,19 @@ function QuizPage() {
 
           {/* ================= Question Screen ================= */}
           <section className="relative bg-zinc-800 w-full min-h-[20rem] p-4 sm:p-6 rounded-xl mt-5 shadow-xl border border-zinc-700">
-            <h1 className="font-bold text-lg sm:text-xl mb-3 text-cyan-300">
+            <h1 className="font-bold text-lg sm:text-xl mb-1 text-cyan-300">
               Q.{activePage + 1} {selectQuestion?.question}
             </h1>
+            
+            {/* 🔹 Progress Tracker */}
+            <div className="flex justify-between items-center w-full mb-4">
+              {/* <span className="text-sm sm:text-base text-gray-300">
+                Question {activePage + 1} / {Data.length}
+              </span> */}
+              <span className="text-sm sm:text-base text-gray-300">
+                Answered: {Object.keys(answers).length} / {Data.length}
+              </span>
+            </div>
 
             {/* Options */}
             <ol className="mt-6 space-y-3 sm:space-y-4">
