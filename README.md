@@ -49,7 +49,7 @@ review screen.
 ### 1. Clone the repo
 
 ``` bash
-git clone https://github.com/your-username/quiz-app.git
+git clone https://github.com/zero9179/Interactive-Quiz.git
 cd quiz-app
 ```
 
